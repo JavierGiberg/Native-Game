@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import NumberContainer from "../../components/game/NumberContainer";
-import PrimaryButton from "../../components/ui/PrimaryButton";
-import Card from "../../components/ui/Card";
-import Title from "../../components/ui/Title";
-import InstructionText from "../../components/ui/InstructionText";
+import { View, StyleSheet, Alert, Text } from "react-native";
+import NumberContainer from "../../../components/game/NumberContainer";
+import PrimaryButton from "../../../components/ui/PrimaryButton";
+import Card from "../../../components/ui/Card";
+import Title from "../../../components/ui/Title";
+import InstructionText from "../../../components/ui/InstructionText";
 import { Ionicons } from "@expo/vector-icons";
 
 function generateRandomBetween(min, max, exclude) {
@@ -17,6 +17,9 @@ let minBoundary = 1;
 let maxBoundary = 100;
 function GameScreen({ userNumber, onGameOver }) {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
+  const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [guessRounds, setGuessRounds] = useState([initialGuess]);
+
   function nextGuessHandler(direction) {
     if (
       (direction === "lower" && currentGuess < userNumber) ||
@@ -42,13 +45,18 @@ function GameScreen({ userNumber, onGameOver }) {
       currentGuess
     );
     setCurrentGuess(newRndNumber);
+    setGuessRounds((prevGuessRounds) => [newRndNumber, ...prevGuessRounds]);
   }
-  const [currentGuess, setCurrentGuess] = useState(initialGuess);
   useEffect(() => {
     if (currentGuess === userNumber) {
       onGameOver();
     }
   }, [currentGuess, userNumber, onGameOver]);
+  useEffect(() => {
+    minBoundary = 1;
+    maxBoundary = 100;
+  }, []);
+
   return (
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
@@ -71,7 +79,11 @@ function GameScreen({ userNumber, onGameOver }) {
         </View>
       </Card>
 
-      {/* <View>LOG ROUNDS</View> */}
+      <View>
+        {guessRounds.map((guessRounds) => (
+          <Text key={guessRounds}>{guessRounds}</Text>
+        ))}
+      </View>
     </View>
   );
 }
