@@ -1,1 +1,1 @@
-# Guess my number - React Native. in process..
+# Guess my number - React Native Game. in process..
